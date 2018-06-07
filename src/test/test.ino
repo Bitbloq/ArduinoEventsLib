@@ -1,7 +1,7 @@
-const int led1 = 8;
-const int led2 = 6;
-const int button1 = 3;
-const int button2 = 4;
+const byte led1 = 8;
+const byte led2 = 6;
+const byte button1 = 3;
+const byte button2 = 4;
 
 
 int button1ON = false;
@@ -34,7 +34,7 @@ void button2_action3(){
 int size = 0;
 typedef void (*functionPointer)(void);
 functionPointer *p = malloc(size * sizeof(functionPointer));
-int * t = malloc(size * sizeof(int));
+unsigned long * t = malloc(size * sizeof(long));
 
 
 void registerButton1(){
@@ -44,7 +44,7 @@ void registerButton1(){
     button1ON = true;
     functionPointer * tempF = realloc(p, (size + 5) * sizeof(functionPointer) );
     if (tempF != NULL) p = tempF;
-    int * tempT = realloc(t, (size + 5) * sizeof(int));
+    int * tempT = realloc(t, (size + 5) * sizeof(unsigned long));
     if ( tempT != NULL) t = tempT;
 
     
