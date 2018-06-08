@@ -1,11 +1,20 @@
+#include <eventheap.h>
+#include <Servo.h>
+
+
 const byte led1 = 8;
 const byte led2 = 6;
 const byte button1 = 3;
 const byte button2 = 4;
+const byte ldr = A5;
+
+Servo servo;
 
 
-int button1ON = false;
-int button2ON = false;
+
+bool button1ON = false;
+bool button2ON = false;
+bool ldrON = false;
 
 void button1_action0(){
   digitalWrite(led1,HIGH);
@@ -31,10 +40,20 @@ void button2_action3(){
   button2ON = false;
 }
 
-int size = 0;
-typedef void (*functionPointer)(void);
-functionPointer *p = malloc(size * sizeof(functionPointer));
-unsigned long * t = malloc(size * sizeof(long));
+
+void ldr_action0(){
+  servo.write(180);
+}
+
+void ldr_action1(){
+  servo.write(90);
+}
+
+void ldr_action2(){
+  ldrON = false;
+}
+
+Heap heap;
 
 
 void registerButton1(){
@@ -42,25 +61,13 @@ void registerButton1(){
     return;
   }else{
     button1ON = true;
-    functionPointer * tempF = realloc(p, (size + 5) * sizeof(functionPointer) );
-    if (tempF != NULL) p = tempF;
-    int * tempT = realloc(t, (size + 5) * sizeof(unsigned long));
-    if ( tempT != NULL) t = tempT;
-
-    
-    *(p + size + 0 ) = button1_action0;
-    *(t + size + 0 ) = millis() + 0;
-    *(p + size + 1 ) = button1_action1;
-    *(t + size + 1 ) = millis() + 1000;
-    *(p + size + 2 ) = button1_action0;
-    *(t + size + 2 ) = millis() + 2000;
-    *(p + size + 3 ) = button1_action1;
-    *(t + size + 3 ) = millis() + 3000;
-    *(p + size + 4 ) = button1_action3;
-    *(t + size + 4 ) = millis() + 3000;
-
-    size += 5;
-
+    heap.insert(button1_action0,millis() + 0);
+    heap.insert(button1_action1,millis() + 100);
+    heap.insert(button1_action0,millis() + 200);
+    heap.insert(button1_action1,millis() + 300);
+    heap.insert(button1_action0,millis() + 400);
+    heap.insert(button1_action1,millis() + 500);
+    heap.insert(button1_action3,millis() + 500);
   }
 }
 
@@ -69,32 +76,24 @@ void registerButton2(){
     return;
   }else{
     button2ON = true;
-    functionPointer * tempF = realloc(p, (size + 7) * sizeof(functionPointer) );
-    if (tempF != NULL) p = tempF;
-    int * tempT = realloc(t, (size + 7) * sizeof(int));
-    if ( tempT != NULL) t = tempT;
+    heap.insert(button2_action0,millis() + 0);
+    heap.insert(button2_action1,millis() + 500);
+    heap.insert(button2_action0, millis() + 1000);
+    heap.insert(button2_action1, millis() + 1500);
+    heap.insert(button2_action0, millis() + 2000);
+    heap.insert(button2_action1, millis() + 2500);
+    heap.insert(button2_action3, millis() + 2500);
+  }
+}
 
-    int t0 = millis();
-
-    *(p + size + 0 ) = button2_action0;
-    *(t + size + 0 ) = t0 + 0;
-    *(p + size + 1 ) = button2_action1;
-    *(t + size + 1 ) = t0 + 100;
-    *(p + size + 2 ) = button2_action0;
-    *(t + size + 2 ) = t0 + 200;
-    *(p + size + 3 ) = button2_action1;
-    *(t + size + 3 ) = t0 + 300;
-    *(p + size + 4 ) = button2_action0;
-    *(t + size + 4 ) = t0 + 400;
-    *(p + size + 5 ) = button2_action1;
-    *(t + size + 5 ) = t0 + 500;
-    *(p + size + 6 ) = button2_action3;
-    *(t + size + 6 ) = t0 + 500;
-
-
-    size += 7;
-
-
+void registerLDR(){
+  if (ldrON){
+    return;
+  }else{
+    ldrON = true;
+    heap.insert(ldr_action0, millis() + 0);
+    heap.insert(ldr_action1, millis() + 3000);
+    heap.insert(ldr_action2, millis() + 3000);
   }
 }
 
@@ -105,21 +104,28 @@ void setup(){
   pinMode(led2,OUTPUT);
   pinMode(button1,INPUT);
   pinMode(button2,INPUT);
+  pinMode(ldr,INPUT);
+  servo.attach(12);
  
 }
 
 void loop(){
 
+  //servo.write(180);
 
   if(digitalRead(button1)) registerButton1();
-  if(digitalRead(button2)) registerButton2();
+  if(digitalRead(button1)) registerButton2();
+  if(analogRead(ldr) < 100) registerLDR();
 
-  for( int i=0 ; i<(size) ; i++ ){
-    if( (millis()) > t[i] ){
-      if (p[i]) p[i]();
-      p[i] = nullptr;
-    } 
+  //loop over all the items and run operations if required
+  CallbackItem* it = heap.first;
+  while(it!=nullptr){
+      CallbackItem* aux = it;
+      it = it->next;
+
+      if(aux->timestamp < millis()){
+          aux->f();
+          heap.remove(aux);
+      }
   }
-
-
 }

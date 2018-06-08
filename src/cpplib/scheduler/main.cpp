@@ -1,4 +1,5 @@
 #include <iostream>
+#include <unistd.h>
 #include "eventheap.h"
 
 using namespace std;
@@ -35,16 +36,32 @@ int main(){
     heap.insert(button1_action0,0);
     heap.insert(button1_action1,1000);
     heap.insert(button1_action0, 2000);
+    heap.insert(button1_action1, 3000);
+    heap.insert(button1_action0, 4000);
+    heap.insert(button1_action1, 5000);
+    heap.insert(button2_action0,10);
+    heap.insert(button2_action1,100);
+    heap.insert(button2_action0, 2000);
+    heap.insert(button2_action1, 3500);
+    heap.insert(button2_action0, 4000);
+    heap.insert(button2_action1, 5050);
 
 
-    //loop over all the items and run operations if required
-    CallbackItem* it = first;
-    while(it!=nullptr){
-        if(it->timestamp > /*current time*/){
-            it->f();
+    unsigned int timer = 0;
+
+    while(true){
+        //loop over all the items and run operations if required
+        CallbackItem* it = heap.first;
+        while(it!=nullptr){
             CallbackItem* aux = it;
             it = it->next;
-            heap.remove(aux);
+
+            if(aux->timestamp < timer/*current time*/){
+                aux->f();
+                heap.remove(aux);
+            }
         }
+        usleep(1000);
+        timer++;
     }
 }
