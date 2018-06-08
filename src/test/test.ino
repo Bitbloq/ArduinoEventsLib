@@ -1,12 +1,17 @@
-#include <eventheap.h>
+#include "eventheap.h"
 #include <Servo.h>
 
 
 const byte led1 = 8;
 const byte led2 = 6;
+const byte led3 = 11;
+const byte led4 = 10;
+const byte button3 = 2;
 const byte button1 = 3;
 const byte button2 = 4;
 const byte ldr = A5;
+const byte ldr2 = A4;
+
 
 Servo servo;
 
@@ -14,7 +19,26 @@ Servo servo;
 
 bool button1ON = false;
 bool button2ON = false;
+bool button3ON = false;
 bool ldrON = false;
+bool ldr2ON = false;
+
+
+void button3_action0(){
+  digitalWrite(led3,HIGH);
+  digitalWrite(led4,LOW);
+}
+
+void button3_action1(){
+  digitalWrite(led3,LOW);
+  digitalWrite(led4,HIGH);
+}
+
+void button3_action3(){
+  button3ON = false;
+}
+
+
 
 void button1_action0(){
   digitalWrite(led1,HIGH);
@@ -82,9 +106,29 @@ void registerButton2(){
     heap.insert(button2_action1, millis() + 1500);
     heap.insert(button2_action0, millis() + 2000);
     heap.insert(button2_action1, millis() + 2500);
-    heap.insert(button2_action3, millis() + 2500);
+    heap.insert(button2_action0, millis() + 3000);
+    heap.insert(button2_action1, millis() + 3500);
+    heap.insert(button2_action3, millis() + 3500);
   }
 }
+
+void registerButton3(){
+  if (button3ON){
+    return;
+  }else{
+    button3ON = true;
+    heap.insert(button3_action0,millis() + 0);
+    heap.insert(button3_action1,millis() + 500);
+    heap.insert(button3_action0, millis() + 1000);
+    heap.insert(button3_action1, millis() + 1500);
+    heap.insert(button3_action0, millis() + 2000);
+    heap.insert(button3_action1, millis() + 2500);
+    heap.insert(button3_action0, millis() + 3000);
+    heap.insert(button3_action1, millis() + 3500);
+    heap.insert(button3_action3, millis() + 3500);
+  }
+}
+
 
 void registerLDR(){
   if (ldrON){
@@ -114,7 +158,8 @@ void loop(){
   //servo.write(180);
 
   if(digitalRead(button1)) registerButton1();
-  if(digitalRead(button1)) registerButton2();
+  if(digitalRead(button2)) registerButton2();
+  if(digitalRead(button3)) registerButton3();
   if(analogRead(ldr) < 100) registerLDR();
 
   //loop over all the items and run operations if required
