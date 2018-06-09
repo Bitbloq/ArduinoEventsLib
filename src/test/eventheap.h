@@ -1,5 +1,13 @@
+//#define fakearduino
+
 #ifndef EVENTHEAP_H
 #define EVENTHEAP_H
+
+#ifdef fakearduino
+unsigned long millis();
+#endif
+
+
 
 typedef void (*functionPointer)(void);
 

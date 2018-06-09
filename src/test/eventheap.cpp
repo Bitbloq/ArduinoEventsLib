@@ -1,5 +1,31 @@
 #include "eventheap.h"
+
+#ifndef fakearduino
 #include "Arduino.h"
+#endif
+
+
+#ifdef fakearduino
+#include <sys/time.h>
+#include <iostream>
+
+
+unsigned long int millis(){
+    struct timeval t;
+
+    long seconds, useconds;
+
+    gettimeofday(&t, NULL);
+
+    seconds  = t.tv_sec;
+    useconds = t.tv_usec;
+
+    return ((seconds) * 1000 + useconds/1000.0) + 0.5;
+
+}
+#endif
+
+
 
 CallbackItem::CallbackItem(functionPointer func, unsigned long t):
     timestamp{t},

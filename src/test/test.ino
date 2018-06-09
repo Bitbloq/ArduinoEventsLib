@@ -1,181 +1,107 @@
 #include "eventheap.h"
-#include <Servo.h>
 
+#include <BQZUMJunior.h>
+#include <BQZUMJuniorPorts.h>
 
-const byte led1 = 8;
-const byte led2 = 6;
-const byte led3 = 11;
-const byte led4 = 10;
-const byte button3 = 2;
-const byte button1 = 3;
-const byte button2 = 4;
-const byte ldr = A5;
-const byte ldr2 = A4;
-
-
-Servo servo;
-
-
-
-bool button1ON = false;
-bool button2ON = false;
-bool button3ON = false;
-bool ldrON = false;
-bool ldr2ON = false;
-
-
-void button3_action0(){
-  digitalWrite(led3,HIGH);
-  digitalWrite(led4,LOW);
-}
-
-void button3_action1(){
-  digitalWrite(led3,LOW);
-  digitalWrite(led4,HIGH);
-}
-
-void button3_action3(){
-  button3ON = false;
-}
-
-
-
-void button1_action0(){
-  digitalWrite(led1,HIGH);
-}
-
-void button1_action1(){
-  digitalWrite(led1,LOW);
-}
-
-void button2_action0(){
-  digitalWrite(led2,HIGH);
-}
-
-void button2_action1(){
-  digitalWrite(led2,LOW);
-}
-
-void button1_action3(){
-  button1ON = false;
-}
-
-void button2_action3(){
-  button2ON = false;
-}
-
-
-void ldr_action0(){
-  servo.write(180);
-}
-
-void ldr_action1(){
-  servo.write(90);
-}
-
-void ldr_action2(){
-  ldrON = false;
-}
 
 Heap heap;
 
+BQ::ZUMJunior zumJunior;
 
-void registerButton1(){
-  if (button1ON){
-    return;
-  }else{
-    button1ON = true;
-    heap.start();
-    heap.insert(button1_action0);
-    heap.delay(100);
-    heap.insert(button1_action1);
-    heap.delay(100);
-    heap.insert(button1_action0);
-    heap.delay(100);
-    heap.insert(button1_action1);
-    heap.delay(100);
-    heap.insert(button1_action0);
-    heap.delay(100);
-    heap.insert(button1_action1);
-    heap.insert(button1_action3);
-  }
+
+const uint8_t boton1Pin = BQ::ZUMJunior::ports[1][0];
+const uint8_t boton2Pin = BQ::ZUMJunior::ports[2][0];
+const uint8_t ledDoble1WhitePin = BQ::ZUMJunior::ports[3][0];
+const uint8_t ledDoble1ColorPin = BQ::ZUMJunior::ports[3][1];
+
+
+
+void ledDoble1White_action1(){
+  digitalWrite(ledDoble1WhitePin,LOW);
 }
 
-void registerButton2(){
-  if (button2ON){
-    return;
-  }else{
-    button2ON = true;
-    heap.start();
-    heap.insert(button2_action0);
-    heap.delay(500);
-    heap.insert(button2_action1);
-    heap.delay(500);
-    heap.insert(button2_action0);
-    heap.delay(500);
-    heap.insert(button2_action1);
-    heap.delay(500);
-    heap.insert(button2_action0);
-    heap.delay(500);
-    heap.insert(button2_action1);
-    heap.insert(button2_action3);
-  }
-}
-
-void registerButton3(){
-  if (button3ON){
-    return;
-  }else{
-    button3ON = true;
-        heap.start();
-    heap.insert(button3_action0);
-    heap.delay(1000);
-    heap.insert(button3_action1);
-    heap.delay(1000);
-    heap.insert(button3_action0);
-    heap.delay(1000);
-    heap.insert(button3_action1);
-    heap.delay(1000);
-    heap.insert(button3_action0);
-    heap.delay(1000);
-    heap.insert(button3_action1);
-    heap.insert(button3_action3);
-  }
+void ledDoble1White_action2(){
+  digitalWrite(ledDoble1WhitePin,HIGH);
 }
 
 
-void registerLDR(){
-  if (ldrON){
-    return;
-  }else{
-    ldrON = true;
-    heap.start();
-    heap.insert(ldr_action0);
-    heap.delay(3000);
-    heap.insert(ldr_action1);
-    heap.insert(ldr_action2);
-  }
+
+void ledDoble1Color_action1(){
+  digitalWrite(ledDoble1ColorPin,LOW);
+}
+
+void ledDoble1Color_action2(){
+  digitalWrite(ledDoble1ColorPin,HIGH);
+}
+
+
+bool boton1ON = false;
+
+void finish_boton1ON(){
+ boton1ON = false; 
+}
+
+void register_boton1(){
+  if(boton1ON) return;
+  boton1ON = true;
+  heap.start();
+  // callbacks ...
+  heap.insert(ledDoble1White_action1);
+  heap.delay(1000);
+  heap.insert(ledDoble1White_action2);
+  heap.delay(1000);
+  heap.insert(ledDoble1White_action1);
+  heap.delay(1000);
+  heap.insert(ledDoble1White_action2);
+  // end callbacks
+  heap.insert(finish_boton1ON);
+}
+
+
+
+bool boton2ON = false;
+
+void finish_boton2ON(){
+ boton2ON = false; 
+}
+
+void register_boton2(){
+  if(boton2ON) return;
+  boton2ON = true;
+  heap.start();
+  // callbacks ...
+  heap.insert(ledDoble1Color_action1);
+  heap.delay(500);
+  heap.insert(ledDoble1Color_action2);
+  heap.delay(500);
+  heap.insert(ledDoble1Color_action1);
+  heap.delay(500);
+  heap.insert(ledDoble1Color_action2);
+  heap.delay(500);
+  heap.insert(ledDoble1Color_action1);
+  heap.delay(500);
+  heap.insert(ledDoble1Color_action2);
+  // end callbacks
+  heap.insert(finish_boton2ON);
 }
 
 
 void setup(){
-
-  pinMode(led1, OUTPUT);
-  pinMode(led2,OUTPUT);
-  pinMode(button1,INPUT);
-  pinMode(button2,INPUT);
-  pinMode(ldr,INPUT);
-  servo.attach(12);
- 
+  zumJunior.setup();
+  pinMode(boton1Pin, INPUT);
+  pinMode(boton2Pin, INPUT);
+  pinMode(ledDoble1WhitePin, OUTPUT);
+  pinMode(ledDoble1ColorPin, OUTPUT);
+  digitalWrite(ledDoble1WhitePin, HIGH);
+  digitalWrite(ledDoble1ColorPin, HIGH);
 }
 
 void loop(){
 
-  if(digitalRead(button1)) registerButton1();
-  if(digitalRead(button2)) registerButton2();
-  if(digitalRead(button3)) registerButton3();
-  if(analogRead(ldr) < 100) registerLDR();
 
   //loop over all the items and run operations if required
   heap.eventloop();
+
+  if(digitalRead(boton1Pin)) register_boton1();
+  if(digitalRead(boton2Pin)) register_boton2();
 }
