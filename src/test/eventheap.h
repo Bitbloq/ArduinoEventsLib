@@ -38,6 +38,7 @@ public:
 
 private:
     unsigned long int __delay;
+    unsigned int __global_id;
 };
 
 #endif // EVENTHEAP_H

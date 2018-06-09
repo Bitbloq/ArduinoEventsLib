@@ -1,3 +1,5 @@
+//#define fakearduino
+
 #include "eventheap.h"
 
 #ifndef fakearduino
@@ -41,7 +43,8 @@ CallbackItem::~CallbackItem(){
 
 Heap::Heap():
     first{ nullptr},
-    __delay{0}
+    __delay{0},
+    __global_id{0}
 {
 
 }
@@ -58,6 +61,7 @@ Heap::~Heap(){
 
     first = nullptr;
 }
+
 
 void Heap::insert(functionPointer p){
     if(first){
@@ -115,10 +119,11 @@ void Heap::eventloop(){
 }
 
 void Heap::delay(unsigned long int delay){
-    __delay += delay;
+    __delay = millis() + delay;
 }
 
 void Heap::start(){
     __delay = millis();
+    __global_id++;
 }
 
