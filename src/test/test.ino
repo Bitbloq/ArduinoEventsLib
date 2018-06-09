@@ -85,13 +85,19 @@ void registerButton1(){
     return;
   }else{
     button1ON = true;
-    heap.insert(button1_action0,millis() + 0);
-    heap.insert(button1_action1,millis() + 100);
-    heap.insert(button1_action0,millis() + 200);
-    heap.insert(button1_action1,millis() + 300);
-    heap.insert(button1_action0,millis() + 400);
-    heap.insert(button1_action1,millis() + 500);
-    heap.insert(button1_action3,millis() + 500);
+    heap.start();
+    heap.insert(button1_action0);
+    heap.delay(100);
+    heap.insert(button1_action1);
+    heap.delay(100);
+    heap.insert(button1_action0);
+    heap.delay(100);
+    heap.insert(button1_action1);
+    heap.delay(100);
+    heap.insert(button1_action0);
+    heap.delay(100);
+    heap.insert(button1_action1);
+    heap.insert(button1_action3);
   }
 }
 
@@ -100,15 +106,19 @@ void registerButton2(){
     return;
   }else{
     button2ON = true;
-    heap.insert(button2_action0,millis() + 0);
-    heap.insert(button2_action1,millis() + 500);
-    heap.insert(button2_action0, millis() + 1000);
-    heap.insert(button2_action1, millis() + 1500);
-    heap.insert(button2_action0, millis() + 2000);
-    heap.insert(button2_action1, millis() + 2500);
-    heap.insert(button2_action0, millis() + 3000);
-    heap.insert(button2_action1, millis() + 3500);
-    heap.insert(button2_action3, millis() + 3500);
+    heap.start();
+    heap.insert(button2_action0);
+    heap.delay(500);
+    heap.insert(button2_action1);
+    heap.delay(500);
+    heap.insert(button2_action0);
+    heap.delay(500);
+    heap.insert(button2_action1);
+    heap.delay(500);
+    heap.insert(button2_action0);
+    heap.delay(500);
+    heap.insert(button2_action1);
+    heap.insert(button2_action3);
   }
 }
 
@@ -117,15 +127,19 @@ void registerButton3(){
     return;
   }else{
     button3ON = true;
-    heap.insert(button3_action0,millis() + 0);
-    heap.insert(button3_action1,millis() + 500);
-    heap.insert(button3_action0, millis() + 1000);
-    heap.insert(button3_action1, millis() + 1500);
-    heap.insert(button3_action0, millis() + 2000);
-    heap.insert(button3_action1, millis() + 2500);
-    heap.insert(button3_action0, millis() + 3000);
-    heap.insert(button3_action1, millis() + 3500);
-    heap.insert(button3_action3, millis() + 3500);
+        heap.start();
+    heap.insert(button3_action0);
+    heap.delay(1000);
+    heap.insert(button3_action1);
+    heap.delay(1000);
+    heap.insert(button3_action0);
+    heap.delay(1000);
+    heap.insert(button3_action1);
+    heap.delay(1000);
+    heap.insert(button3_action0);
+    heap.delay(1000);
+    heap.insert(button3_action1);
+    heap.insert(button3_action3);
   }
 }
 
@@ -135,9 +149,11 @@ void registerLDR(){
     return;
   }else{
     ldrON = true;
-    heap.insert(ldr_action0, millis() + 0);
-    heap.insert(ldr_action1, millis() + 3000);
-    heap.insert(ldr_action2, millis() + 3000);
+    heap.start();
+    heap.insert(ldr_action0);
+    heap.delay(3000);
+    heap.insert(ldr_action1);
+    heap.insert(ldr_action2);
   }
 }
 
@@ -155,22 +171,11 @@ void setup(){
 
 void loop(){
 
-  //servo.write(180);
-
   if(digitalRead(button1)) registerButton1();
   if(digitalRead(button2)) registerButton2();
   if(digitalRead(button3)) registerButton3();
   if(analogRead(ldr) < 100) registerLDR();
 
   //loop over all the items and run operations if required
-  CallbackItem* it = heap.first;
-  while(it!=nullptr){
-      CallbackItem* aux = it;
-      it = it->next;
-
-      if(aux->timestamp < millis()){
-          aux->f();
-          heap.remove(aux);
-      }
-  }
+  heap.eventloop();
 }

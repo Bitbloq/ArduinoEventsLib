@@ -22,8 +22,14 @@ public:
     Heap();
     ~Heap();
     CallbackItem* first;
-    void insert(functionPointer, unsigned long);
+    void insert(functionPointer);
     void remove(CallbackItem *);
+    void eventloop();
+    void delay(unsigned long int delay);
+    void start();
+
+private:
+    unsigned long int __delay;
 };
 
 #endif // EVENTHEAP_H
