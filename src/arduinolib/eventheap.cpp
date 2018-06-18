@@ -78,6 +78,7 @@ void Heap::insert(functionPointer p){
         CallbackItem* cb = new CallbackItem(p, millis() + __delay);
         first = cb;
     }
+    __delay=0;
 }
 
 void Heap::remove(CallbackItem *cb){

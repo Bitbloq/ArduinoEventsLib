@@ -40,8 +40,8 @@ void button1action1(){
   //first action must set flag to true (it avoids catching de event before it is finished)
   button1PinOn = true;
 
-  digitalWrite(ledDoble1ColorPin,LOW);
-  heap.insert(button1action2);
+  digitalWrite(ledDoble1ColorPin, LOW);
+  //heap.insert(button1action2);
 }
 
 /////////////////////////////// END ACTIONS BUTTON 1 //////////////////////////////////
@@ -64,8 +64,8 @@ void button2action1(){
   //first action must set flag to true (it avoids catching de event before it is finished)
   button1PinOn = true;
 
-  digitalWrite(ledDoble1ColorPin,LOW);
-  heap.insert(button2action2);
+  digitalWrite(ledDoble2ColorPin,LOW);
+  //heap.insert(button2action2);
 }
 
 /////////////////////////////// END ACTIONS BUTTON 2 //////////////////////////////////
@@ -77,10 +77,17 @@ void setup(){
   pinMode(button2Pin, INPUT);
   pinMode(ledDoble1WhitePin, OUTPUT);
   pinMode(ledDoble1ColorPin, OUTPUT);
-  digitalWrite(ledDoble1WhitePin, HIGH);
-  digitalWrite(ledDoble1ColorPin, HIGH);
   pinMode(ledDoble2WhitePin, OUTPUT);
   pinMode(ledDoble2ColorPin, OUTPUT);
+  digitalWrite(ledDoble1WhitePin, LOW);
+  digitalWrite(ledDoble1ColorPin, LOW);
+  digitalWrite(ledDoble2WhitePin, LOW);
+  digitalWrite(ledDoble2ColorPin, LOW);
+
+  delay(1000);
+
+  digitalWrite(ledDoble1WhitePin, HIGH);
+  digitalWrite(ledDoble1ColorPin, HIGH);
   digitalWrite(ledDoble2WhitePin, HIGH);
   digitalWrite(ledDoble2ColorPin, HIGH);
 
@@ -90,7 +97,8 @@ void loop(){
 
 
   //loop over all the items and run operations if required
-  heap.eventloop();
+  //heap.eventloop();
+
 
   if(digitalRead(button1Pin)) button1action1();
   if(digitalRead(button2Pin)) button2action1();
