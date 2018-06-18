@@ -25,20 +25,27 @@ bool button2PinOn = false;
 //ACTIONS TRIGGERED WHEN BUTTON 1 IS PRESSED /////////////////////////////////////
 
 
+
 void button1action2(){
   zumJunior.play(BQ::ZUMJunior::SI,50);
   button1PinOn = false;
 }
 
+
+void button1_a_action4(){
+  heap.delay(500);
+  
+  //THIS WOULD BE LAST ACTION OF FOR LOOP
+  heap.insert(button1action1);
+}
+
 void button1_a_action3(){
   digitalWrite(ledDoble2ColorPin,HIGH);
-
-  //THIS WOULD BE AFTER IF
-  heap.insert(button1action2);
+  heap.insert(button1_a_action4);
 }
 
 void button1_a_action2(){
-  heap.delay(1000);
+  heap.delay(500);
   heap.insert(button1_a_action3);
 }
 
@@ -48,32 +55,17 @@ void button1_a_action1(){
 
 }
 
-void button1_b_action3(){
-  digitalWrite(ledDoble1ColorPin,HIGH);
-
-  //THIS WOULD BE AFTER IF
-  heap.insert(button1action2);
-}
-
-void button1_b_action2(){
-  heap.delay(500);
-  heap.insert(button1_b_action3);
-}
-
-void button1_b_action1(){
-  digitalWrite(ledDoble1ColorPin,LOW);
-  heap.insert(button1_b_action2);
-
-}
-
 void button1action1(){
 
-  //EXAMPLE OF IF CONDITION
+  //EXAMPLE OF FOR LOOP
+  static byte counter = 0;
 
-  if(digitalRead(button2Pin)){
+  if(counter < 10){
     heap.insert(button1_a_action1);
+    counter++;
   }else{
-    heap.insert(button1_b_action1);
+    heap.insert(button1action2);
+    counter = 0;
   }
 
 }
