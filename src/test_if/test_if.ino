@@ -24,25 +24,13 @@ bool button2PinOn = false;
 
 //ACTIONS TRIGGERED WHEN BUTTON 1 IS PRESSED /////////////////////////////////////
 
-
-void button1action5(){
+void button1action3(){
   digitalWrite(ledDoble1ColorPin,HIGH);
+  
   //last action must set flag to false
   button1PinOn = false;
 }
 
-//delay 1000 ms
-void button1action4(){
-  heap.delay(1000);
-  heap.insert(button1action5);
-}
-
-void button1action3(){
-  digitalWrite(ledDoble1ColorPin,HIGH);
-  heap.insert(button1action4);
-}
-
-//delay 1000 ms
 void button1action2(){
   heap.delay(1000);
   heap.insert(button1action3);
@@ -67,9 +55,8 @@ void button2action3(){
   button2PinOn = false;
 }
 
-//delay 3000 ms
 void button2action2(){
-  heap.delay(3000);
+  heap.delay(1000);
   heap.insert(button2action3);
 }
 
