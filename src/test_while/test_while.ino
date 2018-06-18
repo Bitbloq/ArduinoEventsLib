@@ -57,16 +57,13 @@ void button1_a_action1(){
 
 void button1action1(){
 
-  //EXAMPLE OF FOR LOOP
-  static byte counter = 0;
-
-  if(counter < 10){
+  //EXAMPLE OF WHILE LOOP
+  
+  if(digitalRead(button2Pin)){
     heap.insert(button1_a_action1);
-    counter++;
   }else{
-    //After for loop
+    //After while loop
     heap.insert(button1action2);
-    counter = 0;
   }
 
 }
