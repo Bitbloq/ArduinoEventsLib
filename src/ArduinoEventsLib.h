@@ -26,6 +26,7 @@ public:
     void insert(functionPointer, int delay = 0);
     void remove(ActionItem *);
     void eventloop();
+    int size;
 };
 
 #endif // ARDUINOEVENTSLIB_H

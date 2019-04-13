@@ -14,7 +14,8 @@ ActionItem::ActionItem(functionPointer func, unsigned long t):
 
 Heap::Heap():
     first{nullptr},
-    last{nullptr}
+    last{nullptr},
+    size{0}
 {
 
 }
@@ -33,29 +34,36 @@ Heap::~Heap(){
 
 
 void Heap::insert(functionPointer p, int delay){
+    Serial.print("Insert with delay: ");
+    Serial.println(millis() + delay);
+    ActionItem* cb = new ActionItem(p, millis() + delay);
     if(last){
         //introduce the new one after last
-        ActionItem* cb = new ActionItem(p, millis() + delay);
         last->next = cb;
+        cb->prev = last;
         last = cb;
     }else{
         //it is the first one
-        ActionItem* cb = new ActionItem(p, millis() + delay);
         first = cb;
         last = cb;
     }
+
+    size++;
+    Serial.print("Insert - size: "); Serial.println(size);
 }
 
 void Heap::remove(ActionItem *cb){
+    Serial.print("Trying to remove - size: "); Serial.println(size);
     //If cb is the first iteam in the heap
     if(cb == first){
-        if(cb->next){
+        // the only  one
+        if(cb == last){
+            first = nullptr;
+            last = nullptr;
+        }else{
             //if cb is NOT de last item in the heap
             first = cb->next;
             first->prev = nullptr;
-        }else{
-            //cb is the only element in the heap
-            first = nullptr;
         }
     }else if (cb == last){
         last = cb->prev;
@@ -65,8 +73,10 @@ void Heap::remove(ActionItem *cb){
         cb->prev->next = cb->next;
         cb->next->prev = cb->prev;
     }
-
+    size--;
     delete cb;
+    Serial.print("Removed - size: "); Serial.println(size);
+
 }
 
 void Heap::eventloop(){
